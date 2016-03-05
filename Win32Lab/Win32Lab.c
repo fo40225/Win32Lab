@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Win32Lab.h"
 
-INT WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-	PSTR lpCmdLine, INT nCmdShow)
+INT APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+	LPWSTR lpCmdLine, INT nCmdShow)
 {
 	// Register the window class.
 	const wchar_t CLASS_NAME[] = L"Sample Window Class";
