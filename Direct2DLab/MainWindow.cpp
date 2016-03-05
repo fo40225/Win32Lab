@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MainWindow.h"
+#include "Utility.h"
 
 PCWSTR MainWindow::ClassName() const { return L"Sample Window Class"; }
 
@@ -25,10 +26,7 @@ LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_PAINT:
 	{
-		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(m_hwnd, &ps);
-		FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
-		EndPaint(m_hwnd, &ps);
+		OnPaint();
 	}
 	return 0;
 
@@ -63,10 +61,50 @@ HRESULT MainWindow::CreateGraphicsResources()
 
 			if (SUCCEEDED(hr))
 			{
-
+				CalculateLayout();
 			}
 		}
 	}
 
 	return hr;
+}
+
+void MainWindow::OnPaint()
+{
+	HRESULT hr = CreateGraphicsResources();
+	if (SUCCEEDED(hr))
+	{
+		PAINTSTRUCT ps;
+		BeginPaint(m_hwnd, &ps);
+
+		pRenderTarget->BeginDraw();
+
+		pRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::SkyBlue));
+		pRenderTarget->FillEllipse(ellipse, pBrush);
+
+		hr = pRenderTarget->EndDraw();
+		if (FAILED(hr) || hr == D2DERR_RECREATE_TARGET)
+		{
+			DiscardGraphicsResources();
+		}
+		EndPaint(m_hwnd, &ps);
+	}
+}
+
+void MainWindow::DiscardGraphicsResources()
+{
+	SafeRelease(&pRenderTarget);
+	SafeRelease(&pBrush);
+}
+
+void MainWindow::CalculateLayout()
+{
+	if (pRenderTarget != NULL)
+	{
+		D2D1_SIZE_F size = pRenderTarget->GetSize();
+		const float x = size.width / 2;
+		const float y = size.height / 2;
+		const float radius = min(x, y);
+		ellipse = D2D1::Ellipse(D2D1::Point2F(x, y), radius, radius);
+	}
 }
