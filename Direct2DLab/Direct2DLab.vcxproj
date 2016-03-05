@@ -146,11 +146,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BaseWindow.cpp" />
     <ClCompile Include="Direct2DLab.cpp" />
+    <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseWindow.h" />
     <ClInclude Include="Direct2DLab.h" />
+    <ClInclude Include="MainWindow.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

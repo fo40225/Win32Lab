@@ -15,6 +15,14 @@ INT APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	RegisterClass(&wc);
 
+	StateInfo *pState = malloc(sizeof(StateInfo));
+	pState->stateCode = 0;
+
+	if (pState == NULL)
+	{
+		return 0;
+	}
+
 	HWND hwnd = CreateWindowEx(
 		0,                              // Optional window styles.
 		CLASS_NAME,                     // Window class
@@ -26,7 +34,7 @@ INT APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		NULL,       // Parent window
 		NULL,       // Menu
 		hInstance,  // Instance handle
-		NULL        // Additional application data
+		pState      // Additional application data
 		);
 
 	if (hwnd == NULL)
@@ -49,6 +57,18 @@ INT APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	StateInfo *pState;
+	if (uMsg == WM_CREATE)
+	{
+		CREATESTRUCT *pCreate = (CREATESTRUCT*)(lParam);
+		pState = (StateInfo*)(pCreate->lpCreateParams);
+		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)pState);
+	}
+	else
+	{
+		pState = GetAppState(hwnd);
+	}
+
 	switch (uMsg)
 	{
 	case WM_DESTROY:
@@ -83,4 +103,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
+inline StateInfo* GetAppState(HWND hwnd)
+{
+	LONG_PTR ptr = GetWindowLongPtr(hwnd, GWLP_USERDATA);
+	StateInfo *pState = (StateInfo*)(ptr);
+	return pState;
 }
