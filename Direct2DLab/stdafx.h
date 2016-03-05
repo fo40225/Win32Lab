@@ -18,3 +18,5 @@
 #include <tchar.h>
 
 // TODO:  在此參考您的程式所需要的其他標頭
+#include <d2d1.h>
+#pragma comment(lib, "d2d1")
