@@ -9,6 +9,16 @@ int APIENTRY wWinMain(
 	)
 {
 	HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-	CoUninitialize();
-	return 0;
+
+	if (SUCCEEDED(hr))
+	{
+		// The function succeeded.
+		CoUninitialize();
+		return 0;
+	}
+	else
+	{
+		// Handle the error.
+		return hr;
+	}
 }
