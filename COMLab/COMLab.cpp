@@ -14,12 +14,10 @@ int APIENTRY wWinMain(
 	{
 		// The function succeeded.
 
-		IFileOpenDialog *pFileOpen;
+		CComPtr<IFileOpenDialog> pFileOpen;
 
 		// Create the FileOpenDialog object.
-		hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
-			IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
-
+		hr = pFileOpen.CoCreateInstance(__uuidof(FileOpenDialog));
 		if (SUCCEEDED(hr))
 		{
 			// Use the FileOpenDialog object.
@@ -30,7 +28,7 @@ int APIENTRY wWinMain(
 			// Get the file name from the dialog box.
 			if (SUCCEEDED(hr))
 			{
-				IShellItem *pItem;
+				CComPtr<IShellItem> pItem;
 				hr = pFileOpen->GetResult(&pItem);
 				if (SUCCEEDED(hr))
 				{
@@ -43,12 +41,8 @@ int APIENTRY wWinMain(
 						MessageBox(NULL, pszFilePath, L"File Path", MB_OK);
 						CoTaskMemFree(pszFilePath);
 					}
-
-					pItem->Release();
 				}
 			}
-
-			pFileOpen->Release();
 		}
 		else
 		{
