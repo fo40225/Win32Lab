@@ -30,6 +30,12 @@ LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	return 0;
 
+	case WM_SIZE:
+	{
+		Resize();
+	}
+	return 0;
+
 	default:
 	{
 		return DefWindowProc(m_hwnd, uMsg, wParam, lParam);
@@ -106,5 +112,20 @@ void MainWindow::CalculateLayout()
 		const float y = size.height / 2;
 		const float radius = min(x, y);
 		ellipse = D2D1::Ellipse(D2D1::Point2F(x, y), radius, radius);
+	}
+}
+
+void MainWindow::Resize()
+{
+	if (pRenderTarget != NULL)
+	{
+		RECT rc;
+		GetClientRect(m_hwnd, &rc);
+
+		D2D1_SIZE_U size = D2D1::SizeU(rc.right, rc.bottom);
+
+		pRenderTarget->Resize(size);
+		CalculateLayout();
+		InvalidateRect(m_hwnd, NULL, FALSE);
 	}
 }

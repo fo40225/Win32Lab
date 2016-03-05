@@ -15,4 +15,5 @@ public:
 	void OnPaint();
 	void DiscardGraphicsResources();
 	void CalculateLayout();
+	void Resize();
 };
