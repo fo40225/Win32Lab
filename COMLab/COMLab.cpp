@@ -8,5 +8,7 @@ int APIENTRY wWinMain(
 	_In_ int       nCmdShow
 	)
 {
+	HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+	CoUninitialize();
 	return 0;
 }
