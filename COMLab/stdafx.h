@@ -21,3 +21,4 @@
 #include <objbase.h>
 #include <shobjidl.h>
 #include <atlbase.h>
+#include <comdef.h>
