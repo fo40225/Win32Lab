@@ -23,6 +23,7 @@ int APIENTRY wWinMain(
 		if (SUCCEEDED(hr))
 		{
 			// Use the FileOpenDialog object.
+			pFileOpen->Release();
 		}
 		else
 		{
