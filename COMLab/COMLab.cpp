@@ -13,6 +13,23 @@ int APIENTRY wWinMain(
 	if (SUCCEEDED(hr))
 	{
 		// The function succeeded.
+
+		IFileOpenDialog *pFileOpen;
+
+		// Create the FileOpenDialog object.
+		hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
+			IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+
+		if (SUCCEEDED(hr))
+		{
+			// Use the FileOpenDialog object.
+		}
+		else
+		{
+			// An error occurred.
+			return hr;
+		}
+
 		CoUninitialize();
 		return 0;
 	}
