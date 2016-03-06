@@ -62,8 +62,7 @@ HRESULT MainWindow::CreateGraphicsResources()
 
 		if (SUCCEEDED(hr))
 		{
-			const D2D1_COLOR_F color = D2D1::ColorF(1.0f, 1.0f, 0);
-			hr = pRenderTarget->CreateSolidColorBrush(color, &pBrush);
+			hr = CreateDeviceDependentResources();
 
 			if (SUCCEEDED(hr))
 			{
@@ -71,6 +70,19 @@ HRESULT MainWindow::CreateGraphicsResources()
 			}
 		}
 	}
+
+	return hr;
+}
+
+HRESULT MainWindow::CreateDeviceDependentResources()
+{
+	HRESULT hr = pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(0, 0, 0), &pClockHandBrush);
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+
+	hr = pRenderTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 0), &pBrush);
 
 	return hr;
 }
@@ -87,6 +99,23 @@ void MainWindow::OnPaint()
 
 		pRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::SkyBlue));
 		pRenderTarget->FillEllipse(ellipse, pBrush);
+
+		// Draw hands
+		SYSTEMTIME time;
+		GetLocalTime(&time);
+
+		// 60 minutes = 30 degrees, 1 minute = 0.5 degree
+		const float fHourAngle = (360.0f / 12) * (time.wHour) + (time.wMinute * 0.5f);
+		const float fMinuteAngle = (360.0f / 60) * (time.wMinute);
+		const float fSecondAngle =
+			(360.0f / 60) * (time.wSecond) + (360.0f / 60000) * (time.wMilliseconds);
+
+		DrawClockHand(0.6f, fHourAngle, 6);
+		DrawClockHand(0.85f, fMinuteAngle, 4);
+		DrawClockHand(0.85f, fSecondAngle, 1);
+
+		// Restore the identity transformation.
+		pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
 
 		hr = pRenderTarget->EndDraw();
 		if (FAILED(hr) || hr == D2DERR_RECREATE_TARGET)
@@ -128,4 +157,21 @@ void MainWindow::Resize()
 		CalculateLayout();
 		InvalidateRect(m_hwnd, NULL, FALSE);
 	}
+}
+
+void MainWindow::DrawClockHand(float fHandLength, float fAngle, float fStrokeWidth)
+{
+	pRenderTarget->SetTransform(
+		D2D1::Matrix3x2F::Rotation(fAngle, ellipse.point)
+		);
+
+	// endPoint defines one end of the hand.
+	D2D_POINT_2F endPoint = D2D1::Point2F(
+		ellipse.point.x,
+		ellipse.point.y - (ellipse.radiusY * fHandLength)
+		);
+
+	// Draw a line from the center of the ellipse to endPoint.
+	pRenderTarget->DrawLine(
+		ellipse.point, endPoint, pClockHandBrush, fStrokeWidth);
 }
